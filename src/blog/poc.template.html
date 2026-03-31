@@ -1,0 +1,44 @@
+@:embed(/templates/main.template.html)
+
+<section class="bulma-hero bulma-is-primary bulma-is-bold">
+  <div class="bulma-hero-body bulma-container bulma-is-max-desktop">
+    <p class="bulma-title">Blog Directive POC</p>
+    <p class="bulma-subtitle bulma-has-text-light">
+      Prototype page for a generalized blog post listing directive.
+    </p>
+  </div>
+</section>
+
+<div class="bulma-section bulma-container bulma-is-max-desktop">
+  @:forPosts { root = "/blog", limit = 3, tag = "technical" }
+  <article class="bulma-card" style="margin-bottom: 1.5rem;">
+    <div class="bulma-card-content">
+      <p class="bulma-is-6 bulma-has-text-right bulma-has-text-grey">
+        @:date(_.date, "MMMM d, yyyy")
+      </p>
+
+      <h4 class="bulma-title bulma-is-5">
+        <a href="@:target(_.cursor.currentDocument.sourcePath)">
+          ${_.cursor.currentDocument.title}
+        </a>
+      </h4>
+
+      <p class="blog-post-byline bulma-subtitle bulma-is-6 bulma-has-text-grey">
+        @:for(_.author)
+        ${_.name}<span class="delimiter">,</span><span class="last-delimiter"> &</span>
+        @:@
+      </p>
+
+      @:for(_.summary)
+      <p>${_}</p>
+      @:@
+
+      @:for(_.tags)
+      <span class="bulma-tag">${_}</span>
+      @:@
+    </div>
+  </article>
+  @:@
+</div>
+
+@:@
