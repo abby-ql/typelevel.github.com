@@ -2,6 +2,7 @@
   author: ${rahsan}
   date: "2020-10-30"
   tags: [technical]
+  summary: "An overview of the concurrency model introduced in Cats Effect 3, including fibers and synchronization."
 %}
 
 # Concurrency in Cats Effect 3

@@ -2,6 +2,7 @@
   author: ${vlovgr}
   date: "2017-06-21"
   tags: [technical]
+  summary: "This is another dummy summary"
 %}
 
 # Validated Configurations with Ciris

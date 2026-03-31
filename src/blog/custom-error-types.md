@@ -2,6 +2,7 @@
   author: ${djspiewak}
   date: "2025-09-02"
   tags: [technical]
+  summary: "This is a dummy summary"
 %}
 
 # Custom Error Types Using Cats Effect and MTL

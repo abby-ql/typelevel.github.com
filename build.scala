@@ -270,6 +270,53 @@ object LaikaCustomizations {
             .map(TemplateSpanSequence(_))
         }
       },
+      TemplateDirectives.eval("forPosts") {
+        import TemplateDirectives.dsl.*
+
+        (
+          cursor,
+          parsedBody,
+          source,
+          attribute("root").as[String].optional,
+          attribute("limit").as[Int].optional,
+          attribute("tag").as[String].optional
+        ).mapN { (c, b, s, root, limit, tag) =>
+
+          def contentScope(value: ConfigValue) =
+            TemplateScope(TemplateSpanSequence(b), value, s)
+
+          val normalizedRoot = root.getOrElse("/blog").stripSuffix("/")
+
+          def inRoot(d: DocumentCursor): Boolean =
+            d.path.toString == normalizedRoot ||
+              d.path.toString.startsWith(normalizedRoot + "/")
+
+          def hasSelectedTag(d: DocumentCursor): Boolean =
+            tag.forall { selectedTag =>
+              d.config
+                .get[Seq[String]]("tags")
+                .toOption
+                .exists(_.contains(selectedTag))
+            }
+
+          val posts =
+            c.root.allDocuments
+              .filter(inRoot)
+              .filter(hasSelectedTag)
+              .flatMap { d =>
+                d.config.get[OffsetDateTime]("date").toList.tupleLeft(d)
+              }
+              .sortBy(_._2)(using summon[Ordering[OffsetDateTime]].reverse)
+              .take(limit.getOrElse(Int.MaxValue))
+
+          posts
+            .traverse { (d, _) =>
+              d.config.get[ConfigValue]("").map(contentScope(_))
+            }
+            .leftMap(_.message)
+            .map(TemplateSpanSequence(_))
+        }
+      },
       TemplateDirectives.create("svg") {
         import TemplateDirectives.dsl.*
         attribute(0).as[String].map { icon =>
